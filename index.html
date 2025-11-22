@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Laboratorio Digital: Aprende Hardware y Software</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --darkest: #021024;
+    --dark: #052659;
+    --mid: #5483B3;
+    --soft: #7DA0CA;
+    --light: #C1E8FF;
+
+    --bg-top: var(--light);
+    --bg-mid: var(--soft);
+    --bg-bottom: var(--mid);
+    --card-bg: rgba(255,255,255,0.96);
+    --muted: #29485f;
+    --text: var(--darkest);
+    --accent: var(--dark);
+    --accent-2: var(--mid);
+    --radius:14px;
+    --glass: rgba(255,255,255,0.7);
+
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* Base */
+  html { font-size: 16px; }
+  @media (max-width:1200px){ html{font-size:15px;} }
+  @media (max-width:900px){ html{font-size:14px;} }
+  @media (max-width:520px){ html{font-size:13px;} }
+
+  html,body{
+    height:100%;
+    margin:0;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 45%, var(--bg-bottom) 100%);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:1200px;
+    margin:28px auto;
+    padding:24px;
+    position:relative;
+  }
+
+  header{
+    display:flex;
+    gap:18px;
+    align-items:center;
+    background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.82));
+    padding:18px;
+    border-radius:var(--radius);
+    box-shadow: 0 12px 30px rgba(3,20,34,0.12);
+    border: 1px solid rgba(5,38,89,0.06);
+  }
+
+  .logo{display:flex;align-items:center;gap:14px;}
+  .logo-ico{
+    width:64px;height:64px;border-radius:12px;
+    background: linear-gradient(135deg, var(--mid), var(--soft));
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--light);
+    box-shadow: 0 8px 20px rgba(5,38,89,0.12);
+    font-size:18px;
+  }
+
+  h1{font-size:clamp(1.25rem, 3.2vw, 2.25rem);margin:0;color:var(--darkest);line-height:1;}
+  .subtitle{color:var(--muted);font-size:0.95rem;margin-top:6px;}
+
+  nav{margin-left:auto;}
+  .nav{display:flex;gap:10px;align-items:center;}
+  .nav a{
+    padding:8px 12px;border-radius:10px;color:var(--darkest);text-decoration:none;font-weight:700;
+    background:transparent;border:2px solid rgba(5,38,89,0.04);
+  }
+  .nav a.active{
+    background: linear-gradient(90deg, var(--soft), var(--mid));
+    color: white;
+    box-shadow: 0 8px 20px rgba(5,38,89,0.12);
+    border: none;
+  }
+
+  main{
+    display:grid;
+    grid-template-columns: 1fr 440px;
+    gap:22px;
+    margin-top:20px;
+  }
+  @media (max-width:1100px){ main { grid-template-columns: 1fr 360px; } }
+  @media (max-width:880px){ main{grid-template-columns:1fr;} .detail-panel{order:2;} .card{order:1;} }
+
+  .card{
+    background: var(--card-bg);
+    padding:16px;
+    border-radius:12px;
+    box-shadow: 0 10px 30px rgba(3,20,34,0.06);
+    border: 1px solid rgba(5,38,89,0.04);
+  }
+
+  .cards-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:14px;
+    margin-top:12px;
+  }
+
+  .hw-card{
+    display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:12px;
+    background: linear-gradient(180deg, white, rgba(255,255,255,0.94));
+    border:1px solid rgba(5,38,89,0.04);
+    transition: transform .18s ease, box-shadow .18s ease;
+    cursor:pointer;
+    min-height:100px;
+  }
+  .hw-card:hover{ transform: translateY(-6px); box-shadow: 0 18px 36px rgba(3,20,34,0.10); }
+
+  .hw-top{display:flex;gap:12px;align-items:center;}
+  .thumb{
+    width:64px;height:64px;border-radius:10px; display:flex;align-items:center;justify-content:center;
+    background: linear-gradient(135deg, var(--light), var(--soft)); border:1px solid rgba(5,38,89,0.06);
+  }
+  .hw-title{font-weight:700;color:var(--darkest);}
+  .hw-desc{color:var(--muted);font-size:0.92rem;}
+
+  .meta-row{display:flex;justify-content:space-between;align-items:center;margin-top:auto;}
+  .pill{background: linear-gradient(90deg, rgba(84,131,179,0.12), rgba(125,160,202,0.08)); padding:6px 10px;border-radius:999px;color:var(--dark);font-size:12px;border:1px solid rgba(5,38,89,0.03);}
+
+  .detail-panel{
+    display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.94));
+    border: 1px solid rgba(5,38,89,0.04);
+    box-shadow: 0 12px 34px rgba(3,20,34,0.06);
+    min-height:360px;
+  }
+  .detail-media{display:flex;gap:14px;align-items:flex-start;}
+  .detail-svg{
+    width:170px;height:170px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+    background: linear-gradient(135deg, var(--soft), var(--mid)); padding:14px;
+    box-shadow: 0 12px 30px rgba(5,38,89,0.08);
+  }
+  .detail-info{flex:1;}
+  .detail-title{font-weight:800;font-size:1.15rem;margin:0;color:var(--darkest);}
+  .detail-sub{color:var(--muted);margin-top:6px;font-size:0.95rem;}
+  .detail-text{margin-top:12px;color:var(--muted);line-height:1.5;white-space:pre-wrap;}
+
+  .actions{display:flex;gap:10px;margin-top:14px;}
+  .btn-primary{
+    background: linear-gradient(90deg, var(--mid), var(--soft));
+    border:none;color:white;padding:10px 14px;border-radius:10px;font-weight:700;
+    cursor:pointer;box-shadow: 0 8px 22px rgba(5,38,89,0.10);
+  }
+  .btn-outline{
+    background:transparent;border:1px solid rgba(5,38,89,0.08);color:var(--darkest);padding:10px 12px;border-radius:10px;cursor:pointer;
+  }
+
+  .software-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+  @media (max-width:720px){ .software-grid{grid-template-columns:1fr;} }
+  .sw-box{background: linear-gradient(180deg, rgba(196,231,255,0.9), rgba(255,255,255,0.92)); padding:12px;border-radius:10px;border:1px solid rgba(5,38,89,0.03); color:var(--darkest);}
+
+  .quiz-card{padding:18px;border-radius:12px;}
+  .question{margin-bottom:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.94));border:1px solid rgba(5,38,89,0.03);}
+  .opts{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+  .opt-btn{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:linear-gradient(180deg,#fff,#f7fbff);border:1px solid rgba(5,38,89,0.03);cursor:pointer;color:var(--darkest);min-height:44px;justify-content:center;}
+  .opt-btn:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(3,20,34,0.06);}
+  .opt-btn.correct{background: linear-gradient(90deg, rgba(84,131,179,0.16), rgba(125,160,202,0.06)); border-color: rgba(84,131,179,0.18);}
+  .opt-btn.incorrect{background: linear-gradient(90deg, rgba(248,113,113,0.06), #fff); border-color: rgba(248,113,113,0.12);}
+
+  .score{font-weight:800;color:var(--dark);}
+
+  .hw-card:focus, .opt-btn:focus, .btn-primary:focus, .btn-outline:focus { outline: 3px solid rgba(84,131,179,0.22); outline-offset:4px; }
+
+  footer{margin-top:22px;color:var(--dark);text-align:center;}
+
+  /* Responsive detail/media tweaks */
+  .detail-svg { width:140px; height:140px; }
+  @media (max-width:720px){
+    .detail-svg { width:120px; height:120px; }
+    .detail-media{flex-direction:column;align-items:center;}
+    .detail-info{width:100%;}
+    .detail-panel{min-height:auto;padding:14px;}
+    .logo-ico{width:52px;height:52px;}
+  }
+
+  /* Canvas overlay fixed to viewport */
+  .canvas-overlay {
+    position: fixed !important;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* Custom cursor toggling on small screens */
+  .custom-cursor { position: fixed; display: block; }
+  @media (max-width:720px){
+    .custom-cursor { display:none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <div class="logo-ico" aria-hidden="true">AV</div>
+        <div>
+          <h1>Laboratorio Digital: Aprende Hardware y Software</h1>
+          <div class="subtitle">Fichas visuales, explicaciones y cuestionario</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Principal">
+        <a href="#hardware" class="active">Hardware</a>
+        <a href="#software">Software</a>
+        <a href="#cuestionario">Cuestionario</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="card" aria-labelledby="hw-heading">
+        <h2 id="hw-heading">Componentes</h2>
+        <p class="subtitle">Haz clic en una tarjeta para ver la ficha con imagen y descripción.</p>
+
+        <div class="cards-grid" id="cards" role="list"></div>
+
+        <section id="software" class="card" tabindex="0" aria-labelledby="sw-heading" style="margin-top:16px;">
+          <h2 id="sw-heading">Software</h2>
+          <p class="subtitle">Capas, responsabilidades y checklist rápido.</p>
+
+          <div class="software-grid" role="group" aria-label="Ficha Software">
+            <div class="sw-box">
+              <strong>Capas</strong>
+              <div style="margin-top:8px;">Firmware; Drivers; Sistema operativo; Middleware; Aplicaciones.</div>
+            </div>
+
+            <div class="sw-box">
+              <strong>Responsabilidades</strong>
+              <div style="margin-top:8px;">Gestión de recursos; abstracción; seguridad; compatibilidad.</div>
+            </div>
+
+            <div class="sw-box">
+              <strong>Criterios</strong>
+              <div style="margin-top:8px;">Compatibilidad; requisitos; licenciamiento; mantenibilidad.</div>
+            </div>
+
+            <div class="sw-box">
+              <strong>Mantenimiento</strong>
+              <div style="margin-top:8px;">Parches planificados; backups; pruebas; telemetría; mínimo privilegio.</div>
+            </div>
+
+            <div class="sw-box" style="grid-column:1 / -1;">
+              <strong>Checklist rápida</strong>
+              <div style="margin-top:8px;">SO parcheado; drivers verificados; runtimes documentados; backups y telemetría activos; cifrado aplicado.</div>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+      <aside class="detail-panel" id="detail-panel" aria-live="polite">
+        <div id="detail-empty">
+          <div style="font-weight:800;font-size:1.05rem">Selecciona un componente</div>
+          <div style="color:var(--muted);margin-top:8px">Aquí se mostrará la ficha con imagen, características y nota técnica.</div>
+        </div>
+
+        <div id="detail-card" style="display:none">
+          <div class="detail-media">
+            <div class="detail-svg" id="detail-svg" aria-hidden="true"></div>
+            <div class="detail-info">
+              <div class="detail-title" id="detail-title">Título</div>
+              <div class="detail-sub" id="detail-sub">Subtítulo</div>
+              <div class="detail-text" id="detail-text"></div>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn-primary" id="detail-action">Actividad rápida</button>
+            <button class="btn-outline" id="detail-close">Cerrar</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <section class="card quiz-card" id="cuestionario" aria-labelledby="quiz-title" style="margin-top:20px;">
+      <h2 id="quiz-title">Cuestionario</h2>
+      <p class="subtitle">Responde y abre la ficha relacionada si necesitas revisar antes.</p>
+
+      <div id="quiz-area"></div>
+
+      <div style="display:flex;gap:10px;margin-top:12px;align-items:center;">
+        <button class="btn-primary" id="finish">Ver puntaje</button>
+        <button class="btn-outline" id="reset">Reiniciar</button>
+        <div style="margin-left:auto" id="result" class="score" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <footer>
+      <small>Paleta usada: #021024, #052659, #5483B3, #7DA0CA, #C1E8FF — interfaz clara, llamativa y responsiva.</small>
+    </footer>
+  </div>
+
+<script>
+/* Component data + SVGs */
+const hardware = [
+  { id:'cpu', title:'CPU (Procesador)', sub:'Unidad central de procesamiento', brief:'Núcleos, hilos, frecuencia y caché.', detail:`La CPU interpreta y ejecuta instrucciones del SO y programas. Responsable de operaciones aritméticas y lógicas; rendimiento afectado por núcleos y frecuencia.`,
+    svg:`<svg viewBox="0 0 120 120" width="160" height="160" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="12" width="96" height="96" rx="14" fill="rgba(2,6,34,0.02)" stroke="rgba(5,38,89,0.06)"/><rect x="30" y="30" width="60" height="60" rx="6" fill="#021024"/><g transform="translate(30,30)" fill="none" stroke="#052659" stroke-width="2"><rect x="6" y="6" width="48" height="48" rx="4" /><path d="M0 12h6M0 30h6M0 48h6M60 12h-6M60 30h-6M60 48h-6" stroke-linecap="round"/></g></svg>` },
+  { id:'ram', title:'RAM (Memoria)', sub:'Memoria volátil de acceso rápido', brief:'Capacidad y velocidad afectan multitarea.', detail:`La RAM almacena temporalmente datos y código en uso. Es volátil: su contenido se pierde al apagar; más RAM mejora multitarea y manejo de grandes datos.`,
+    svg:`<svg viewBox="0 0 120 120" width="160" height="160" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="30" width="96" height="60" rx="8" fill="#021024" stroke="rgba(5,38,89,0.06)"/><g fill="#5483B3"><rect x="24" y="40" width="8" height="40" rx="1"/><rect x="36" y="40" width="8" height="40" rx="1"/><rect x="48" y="40" width="8" height="40" rx="1"/><rect x="60" y="40" width="8" height="40" rx="1"/><rect x="72" y="40" width="8" height="40" rx="1"/><rect x="84" y="40" width="8" height="40" rx="1"/></g></svg>` },
+  { id:'storage', title:'Disco duro / SSD', sub:'Almacenamiento no volátil', brief:'NVMe ofrece latencias muy bajas.', detail:`HDD y SSD guardan el SO, programas y archivos. SSD (NVMe) reduce tiempos de arranque y carga frente a HDD mecánicos.`,
+    svg:`<svg viewBox="0 0 120 120" width="160" height="160" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="22" width="88" height="76" rx="12" fill="#021024" stroke="rgba(5,38,89,0.06)"/><circle cx="60" cy="60" r="22" fill="#5483B3" opacity="0.14"/><circle cx="60" cy="60" r="10" fill="#5483B3"/><path d="M38 78 L82 78" stroke="#052659" stroke-width="3" stroke-linecap="round"/></svg>` },
+  { id:'keyboard', title:'Teclado', sub:'Entrada de texto y comandos', brief:'Ergonomía y disposición de teclas.', detail:`Teclado para escribir y controlar. Variantes mecánicas e inalámbricas; la ergonomía reduce fatiga.`,
+    svg:`<svg viewBox="0 0 120 120" width="160" height="160" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="30" width="96" height="60" rx="8" fill="#021024" stroke="rgba(5,38,89,0.06)"/><g fill="#29485f"><rect x="20" y="38" width="18" height="10" rx="2"/><rect x="40" y="38" width="18" height="10" rx="2"/><rect x="60" y="38" width="26" height="10" rx="2"/><rect x="20" y="52" width="18" height="10" rx="2"/><rect x="40" y="52" width="44" height="10" rx="2"/></g></svg>` },
+  { id:'monitor', title:'Monitor', sub:'Salida visual', brief:'Resolución y frecuencia afectan nitidez.', detail:`Pantalla que muestra texto, gráficos y video. Parámetros: resolución, tipo de panel y frecuencia de actualización.`,
+    svg:`<svg viewBox="0 0 120 120" width="160" height="160" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="16" width="84" height="56" rx="6" fill="#021024" stroke="rgba(5,38,89,0.06)"/><rect x="26" y="24" width="68" height="40" rx="4" fill="#052659"/><rect x="44" y="76" width="32" height="8" rx="2" fill="#5483B3"/></svg>` },
+  { id:'gpu', title:'Tarjeta gráfica (GPU)', sub:'Render y cómputo paralelo', brief:'VRAM y drivers son críticos.', detail:`La GPU acelera gráficos y cómputo paralelo (ML, render). Puede ser integrada o dedicada; tiene memoria VRAM propia y requiere controladores específicos.`,
+    svg:`<svg viewBox="0 0 120 120" width="160" height="160" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="28" width="84" height="60" rx="8" fill="#021024" stroke="rgba(5,38,89,0.06)"/><g fill="#7DA0CA"><rect x="28" y="38" width="16" height="10" rx="2"/><rect x="48" y="38" width="24" height="10" rx="2"/><rect x="28" y="52" width="10" height="24" rx="2"/><rect x="44" y="52" width="36" height="24" rx="2"/></g></svg>` },
+  { id:'psu', title:'Fuente de poder (PSU)', sub:'Suministro de energía', brief:'Potencia nominal y protecciones.', detail:`Convierte AC a DC para los componentes. Su eficiencia, potencia y protecciones afectan estabilidad y seguridad eléctrica.`,
+    svg:`<svg viewBox="0 0 120 120" width="160" height="160" xmlns="http://www.w3.org/2000/svg"><rect x="20" y="26" width="80" height="68" rx="10" fill="#021024" stroke="rgba(5,38,89,0.06)"/><rect x="28" y="36" width="64" height="8" rx="2" fill="#5483B3"/><rect x="28" y="50" width="40" height="24" rx="4" fill="#052659"/><rect x="72" y="50" width="8" height="24" rx="2" fill="#29485f"/></svg>` }
+];
+
+const cardsEl = document.getElementById('cards');
+hardware.forEach(h => {
+  const art = document.createElement('article');
+  art.className = 'hw-card';
+  art.tabIndex = 0;
+  art.innerHTML = `
+    <div class="hw-top">
+      <div class="thumb" aria-hidden="true">${h.svg}</div>
+      <div>
+        <div class="hw-title">${h.title}</div>
+        <div class="hw-desc">${h.brief}</div>
+      </div>
+    </div>
+    <div class="meta-row">
+      <div class="pill">${h.sub}</div>
+      <div style="color:var(--muted);font-size:12px">Ver ficha</div>
+    </div>
+  `;
+  art.addEventListener('click', ()=> showDetail(h.id));
+  art.addEventListener('keydown', (e)=> { if(e.key==='Enter' || e.key===' ') { e.preventDefault(); showDetail(h.id); } });
+  cardsEl.appendChild(art);
+});
+
+const detailEmpty = document.getElementById('detail-empty');
+const detailCard = document.getElementById('detail-card');
+const detailSvg = document.getElementById('detail-svg');
+const detailTitle = document.getElementById('detail-title');
+const detailSub = document.getElementById('detail-sub');
+const detailText = document.getElementById('detail-text');
+const detailClose = document.getElementById('detail-close');
+const detailAction = document.getElementById('detail-action');
+
+function showDetail(id){
+  const item = hardware.find(x => x.id === id);
+  if(!item) return;
+  detailEmpty.style.display = 'none';
+  detailCard.style.display = 'block';
+  detailSvg.innerHTML = item.svg;
+  detailTitle.textContent = item.title;
+  detailSub.textContent = item.sub;
+  detailText.textContent = item.detail;
+  detailAction.onclick = ()=> alert('Actividad rápida: toma notas y compara dos equipos según esta ficha.');
+  detailCard.querySelector('.detail-info').focus();
+}
+
+detailClose.addEventListener('click', ()=>{
+  detailCard.style.display = 'none';
+  detailEmpty.style.display = 'block';
+});
+</script>
+
+<script>
+/* Cuestionario */
+const questions = [
+  { id:1, q:'¿Qué componente se considera el "cerebro" de la computadora?', options:['RAM','CPU','Disco duro','Monitor'], answer:1, related:'cpu', explain:'La CPU ejecuta instrucciones y dirige las operaciones del equipo.' },
+  { id:2, q:'¿Cuál es la función principal de la RAM?', options:['Almacenar archivos permanentemente','Procesar gráficos','Memoria de trabajo temporal','Mostrar imágenes'], answer:2, related:'ram', explain:'La RAM es memoria de trabajo que los programas usan mientras corren; se borra al apagar.' },
+  { id:3, q:'¿Dónde se guardan los archivos y el sistema operativo?', options:['RAM','CPU','Disco duro / SSD','Teclado'], answer:2, related:'storage', explain:'El disco duro o SSD almacena datos y programas de forma permanente.' },
+  { id:4, q:'Cuál de estos es un dispositivo de entrada?', options:['Monitor','Disco duro','Teclado','GPU'], answer:2, related:'keyboard', explain:'El teclado es un dispositivo de entrada para escribir y controlar la computadora.' },
+  { id:5, q:'¿Qué componente muestra texto, imágenes y videos?', options:['Teclado','Monitor','Fuente de poder','RAM'], answer:1, related:'monitor', explain:'El monitor muestra la salida visual de la computadora.' },
+  { id:6, q:'¿Qué dispositivo procesa imágenes y gráficos?', options:['Fuente de poder','CPU','GPU','Teclado'], answer:2, related:'gpu', explain:'La GPU acelera el procesado gráfico y el renderizado.' },
+  { id:7, q:'¿Cuál es la función de la fuente de poder (PSU)?', options:['Almacenar archivos','Suministrar energía a los componentes','Mostrar imágenes','Procesar instrucciones'], answer:1, related:'psu', explain:'La PSU entrega energía estable a todos los componentes.' }
+];
+
+const quizArea = document.getElementById('quiz-area');
+let userAnswers = {};
+function renderQuiz(){
+  quizArea.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const qdiv = document.createElement('div');
+    qdiv.className = 'question';
+    qdiv.innerHTML = `<div style="font-weight:700">${idx+1}. ${q.q}</div>`;
+    const opts = document.createElement('div');
+    opts.className = 'opts';
+    q.options.forEach((opt,i) => {
+      const b = document.createElement('button');
+      b.className = 'opt-btn';
+      b.type = 'button';
+      b.innerHTML = `<span>${opt}</span>`;
+      b.addEventListener('click', ()=> select(q.id, i, b, opts, q));
+      opts.appendChild(b);
+    });
+    qdiv.appendChild(opts);
+    const rel = document.createElement('div');
+    rel.style.marginTop = '8px';
+    const rbtn = document.createElement('button');
+    rbtn.className = 'btn-outline';
+    rbtn.textContent = 'Abrir ficha relacionada';
+    rbtn.addEventListener('click', ()=> showDetail(q.related));
+    rel.appendChild(rbtn);
+    qdiv.appendChild(rel);
+    quizArea.appendChild(qdiv);
+  });
+  document.getElementById('result').textContent = '';
+  userAnswers = {};
+}
+function select(qid, idx, btn, optsEl, qObj){
+  if(userAnswers[qid] !== undefined) return;
+  userAnswers[qid] = idx;
+  optsEl.querySelectorAll('.opt-btn').forEach((el, i)=> {
+    el.disabled = true;
+    if(i === qObj.answer) el.classList.add('correct');
+    if(i === idx && i !== qObj.answer) el.classList.add('incorrect');
+  });
+  const ex = document.createElement('div');
+  ex.style.color = 'var(--muted)';
+  ex.style.marginTop = '8px';
+  ex.textContent = qObj.explain;
+  optsEl.parentNode.appendChild(ex);
+}
+renderQuiz();
+document.getElementById('finish').addEventListener('click', ()=>{
+  const total = questions.length;
+  let correct = 0;
+  questions.forEach(q => { if(userAnswers[q.id] === q.answer) correct++; });
+  document.getElementById('result').textContent = `Puntaje: ${correct}/${total}`;
+});
+document.getElementById('reset').addEventListener('click', ()=> renderQuiz());
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    if(detailCard && detailCard.style.display === 'block') { detailCard.style.display = 'none'; detailEmpty.style.display = 'block'; }
+  }
+  if(document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+  if(e.key.toLowerCase() === 'h') location.hash = '#hardware';
+  if(e.key.toLowerCase() === 's') location.hash = '#software';
+  if(e.key.toLowerCase() === 'q') location.hash = '#cuestionario';
+});
+</script>
+
+<!-- ClickSpark adaptado e integrado: canvas fixed + custom cursor responsive -->
+<script>
+(function () {
+  const sparkColor = getComputedStyle(document.documentElement).getPropertyValue('--mid').trim() || '#5483B3';
+  const sparkSize = 10;
+  const sparkRadius = 18;
+  const sparkCount = 10;
+  const duration = 420;
+  const easingType = 'ease-out';
+  const extraScale = 1.0;
+
+  // Canvas fixed to viewport for responsive behavior
+  const canvas = document.createElement('canvas');
+  canvas.className = 'canvas-overlay';
+  canvas.style.width = '100vw';
+  canvas.style.height = '100vh';
+  canvas.style.pointerEvents = 'none';
+  canvas.style.zIndex = 9999;
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  let width = 0, height = 0;
+  const resize = () => {
+    width = Math.floor(window.innerWidth);
+    height = Math.floor(window.innerHeight);
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+  };
+  resize();
+  window.addEventListener('resize', resize);
+
+  function easeFunc(t) {
+    switch (easingType) {
+      case 'linear': return t;
+      case 'ease-in': return t * t;
+      case 'ease-in-out': return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      default: return t * (2 - t); // ease-out
+    }
+  }
+
+  let sparks = [];
+  let lastTimestamp = null;
+
+  function spawnSparks(cx, cy, count = sparkCount) {
+    const now = performance.now();
+    for (let i = 0; i < count; i++) {
+      sparks.push({
+        x: cx,
+        y: cy,
+        angle: (2 * Math.PI * i) / count + (Math.random() - 0.5) * 0.15,
+        start: now,
+        idx: i
+      });
+    }
+  }
+
+  function draw(ts) {
+    if (!lastTimestamp) lastTimestamp = ts;
+    lastTimestamp = ts;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const now = ts;
+    sparks = sparks.filter(spark => {
+      const elapsed = now - spark.start;
+      if (elapsed >= duration) return false;
+      const progress = elapsed / duration;
+      const eased = easeFunc(progress);
+      const distance = eased * sparkRadius * extraScale;
+      const lineLength = sparkSize * (1 - eased) * (1 + 0.4 * Math.sin(progress * Math.PI * 2 + spark.idx));
+      const alpha = 1 - eased;
+      const x1 = spark.x + distance * Math.cos(spark.angle);
+      const y1 = spark.y + distance * Math.sin(spark.angle);
+      const x2 = spark.x + (distance + lineLength) * Math.cos(spark.angle);
+      const y2 = spark.y + (distance + lineLength) * Math.sin(spark.angle);
+      ctx.strokeStyle = sparkColor;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = 2 + 1 * (1 - eased);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      return true;
+    });
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  function getRelative(e) {
+    return { x: e.clientX, y: e.clientY };
+  }
+
+  // Trail when moving and spawn on clicks/touch
+  window.addEventListener('mousemove', (e) => {
+    const p = getRelative(e);
+    if (Math.random() < 0.06) {
+      spawnSparks(p.x + (Math.random()-0.5)*6, p.y + (Math.random()-0.5)*6, 2);
+    }
+  }, { passive: true });
+
+  window.addEventListener('click', (e) => {
+    const p = getRelative(e);
+    spawnSparks(p.x, p.y, sparkCount);
+  });
+
+  window.addEventListener('touchstart', (ev) => {
+    const t = ev.touches[0];
+    if (!t) return;
+    spawnSparks(t.clientX, t.clientY, sparkCount);
+  }, { passive: true });
+
+  // Custom cursor dot (responsive: hides on small screens)
+  const cursorDot = document.createElement('div');
+  cursorDot.className = 'custom-cursor';
+  cursorDot.style.position = 'fixed';
+  cursorDot.style.width = '12px';
+  cursorDot.style.height = '12px';
+  cursorDot.style.borderRadius = '50%';
+  cursorDot.style.background = sparkColor;
+  cursorDot.style.pointerEvents = 'none';
+  cursorDot.style.zIndex = 10001;
+  cursorDot.style.boxShadow = '0 6px 18px rgba(5,38,89,0.12)';
+  cursorDot.style.transform = 'translate(-50%,-50%)';
+  document.body.appendChild(cursorDot);
+
+  window.addEventListener('mousemove', (e) => {
+    const p = getRelative(e);
+    cursorDot.style.left = p.x + 'px';
+    cursorDot.style.top = p.y + 'px';
+  }, { passive: true });
+
+  function updateCursorVisibility() {
+    if (window.matchMedia("(max-width:720px)").matches) {
+      cursorDot.style.display = 'none';
+    } else {
+      cursorDot.style.display = '';
+    }
+  }
+  updateCursorVisibility();
+  window.matchMedia("(max-width:720px)").addEventListener('change', updateCursorVisibility);
+
+})();
+</script>
+</body>
+</html>
